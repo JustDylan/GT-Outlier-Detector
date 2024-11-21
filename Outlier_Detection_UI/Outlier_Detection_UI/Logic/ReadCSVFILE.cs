@@ -14,6 +14,7 @@ namespace Outlier_Detection_UI
         {
         }
 
+        // Reads in csv files rows and columns to populate datagrid
         public static DataView GetCSVData(string path)
         {
             DataTable dataTable = new DataTable();
@@ -23,12 +24,22 @@ namespace Outlier_Detection_UI
 
             if(!parser.EndOfData)
             {
-
+                var columns = parser.ReadFields();
+                foreach (var col in columns) 
+                {
+                    dataTable.Columns.Add(col);
+                }
             }
 
+            while (!parser.EndOfData)
+            {
+                var row = parser.ReadFields();
+
+                dataTable.Rows.Add(row);
+            }
 
             // Change before done.
-            return null;
+            return dataTable.DefaultView;
         }
     }
 }
