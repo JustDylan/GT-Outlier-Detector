@@ -10,7 +10,7 @@
         Title="Data Deviant" Height="475" Width="800">
     <DockPanel Margin="5">
         <StackPanel>
-            <Grid >
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
@@ -43,9 +43,7 @@
                 <!-- Graph Panel-->
                 <ScottPlot:WpfPlot Grid.Row="0"  x:Name="WpfPlot1" />
                 <!-- CSV Data Panel-->
-                <DataGrid x:Name="CSVData" Grid.Row="1">
-                    
-                </DataGrid>
+                <DataGrid x:Name="CSVData" Grid.Row="1"/>
             </Grid>
         </StackPanel>
     </DockPanel>
