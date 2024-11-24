@@ -1,0 +1,2 @@
+import nuitka
+print("test")

@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Outlier_Detection_UI", "Outlier_Detection_UI\Outlier_Detection_UI.csproj", "{6C71CFB9-44AA-4DD6-AC46-341D00A08BD0}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Outlier_Detector", "Outlier_Detector\Outlier_Detector.pyproj", "{12D72C7A-1E64-492E-BDB3-82AD49ED8150}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,8 @@ Global
 		{6C71CFB9-44AA-4DD6-AC46-341D00A08BD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C71CFB9-44AA-4DD6-AC46-341D00A08BD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C71CFB9-44AA-4DD6-AC46-341D00A08BD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12D72C7A-1E64-492E-BDB3-82AD49ED8150}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D72C7A-1E64-492E-BDB3-82AD49ED8150}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
