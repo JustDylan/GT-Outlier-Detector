@@ -1,3 +1,7 @@
+
+# My files to ignore
+python_interpreter/
+
 python_interpreter/*
 csv files/*
 !*.gitkeep
