@@ -1,15 +1,20 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
+import os
 
 from tensorflow.keras import layers, losses
 from tensorflow.keras.models import Model
 
 import csv
 
+print("!!!!! current working directory !!!!! ", os.getcwd())
+
+#DATA_PATH = "DataSet1_Normalized.csv"
+
 DATA_PATH = "DataSet1_Normalized.csv"
 
-print(tf.version.VERSION)
+#print(tf.version.VERSION)
 
 # average squared difference between float arrays
 def vDiff(arr1, arr2):
