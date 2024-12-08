@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Python.Runtime;
 using OpenTK.Audio.OpenAL;
+using System.Globalization;
 
 namespace Outlier_Detection_UI
 {
@@ -26,31 +27,11 @@ namespace Outlier_Detection_UI
         public MainWindow()
         {
             InitializeComponent();
-
-            // For testing delete later
-            Loaded += (s, e) =>
-            {
-                double[] dataX = { 1, 2, 3, 4, 5 };
-                double[] dataY = { 1, 4, 9, 16, 25 };
-                WpfPlot1.Plot.Add.Scatter(dataX, dataY);
-                WpfPlot1.Refresh();
-            };
-
+          
             // temporary path to python dll just to get things working
             string pythonDll = System.IO.Path.GetFullPath("../../../../python_interpreter/python311.dll");
             Environment.SetEnvironmentVariable("PYTHONNET_PYDLL", pythonDll);
             Runtime.PythonDLL = pythonDll;
-
-
-            // experimental code which runs python code that adds 3 to c# integer, then displays this number in graph
-            int integer = 21;
-            object output = RunPython(
-@"integer=integer+3;
-result=integer
-", integer, "integer", "result");
-            WpfPlot1.Plot.Add.Text(output.ToString(), 0, 0);
-
-            //PythonEngine.RunSimpleString(@"print(""hello world from python!"")");
         }
 
         private object RunPython(string pycode, object parameter, string parameterName, string returnedVariableName)
@@ -69,21 +50,84 @@ result=integer
             return returnedVariable;
         }
 
-// Method to open csv file and process to data grid
-private void CSV_Click(object sender, RoutedEventArgs e)
+        // Temporary Needs to be changed later
+        private void Model_Click(object sender, RoutedEventArgs e)
+        {
+            // Implement properly later
+
+        }
+
+        private void Train_Click(object sender, RoutedEventArgs e)
+        {
+            // Implement Later
+        }
+
+        // Method to open csv file and process to data grid
+        private void CSV_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFile = new OpenFileDialog();
 
             // Change to open in specific folder later *****
             openFile.Filter = "Csv Files| *.csv";
 
-            if(openFile.ShowDialog() == true) 
+            if (openFile.ShowDialog() == true)
             {
                 var csv = ReadCSVFile.GetCSVData(openFile.FileName);
 
                 // print csv file to DataGrid
                 CSVData.ItemsSource = csv;
             }
+        }
+
+
+        // UNDER CONSTRUCTION
+        private void Run_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog();
+
+            // Change to open in specific folder later *****
+            openFile.Filter = "Csv Files| *.csv";
+
+            if (openFile.ShowDialog() == true)
+            {
+                var csv = ReadCSVFile.GetCSVData(openFile.FileName);
+
+                // print csv file to DataGrid
+                CSVData.ItemsSource = csv;
+            }
+
+            // Change later to have user select model or python script they want to use
+            string pyPath = System.IO.Path.GetFullPath("../../../../python_scripts/Test_For_Csharp");
+            string pyCode = System.IO.File.ReadAllText(pyPath);
+            object output;
+            try
+            {
+
+                output = RunPython(pyCode, null, "", "testInteger");
+
+                // Convert Python object to string
+                string result = output.ToString();
+
+                //
+                string[] theNumbers = result.Trim('[', ']').Split(',');
+
+                int[] intArray = theNumbers.Select(n => int.Parse(n)).ToArray();
+                int index = 1;
+                foreach (int var in intArray)
+                {
+                    WpfPlot1.Plot.Add.Scatter(index, var);
+                    index++;
+                }
+
+                WpfPlot1.Refresh();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: RunPython failure.");
+                Console.WriteLine("Exception Message: " + ex.Message);
+            }
+
+           
         }
     }
 }
