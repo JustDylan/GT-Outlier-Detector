@@ -15,6 +15,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Python.Runtime;
 using OpenTK.Audio.OpenAL;
+using Microsoft.VisualBasic.ApplicationServices;
+using System.Diagnostics;
+using System.Windows.Controls.Primitives;
 
 namespace Outlier_Detection_UI
 {
@@ -37,20 +40,18 @@ namespace Outlier_Detection_UI
             };
 
             // temporary path to python dll just to get things working
-            string pythonDll = System.IO.Path.GetFullPath("../../../../python_interpreter/python311.dll");
+            string pythonDll = System.IO.Path.GetFullPath(@"..\..\..\..\..\python_interpreter\python311.dll");
             Environment.SetEnvironmentVariable("PYTHONNET_PYDLL", pythonDll);
             Runtime.PythonDLL = pythonDll;
-
 
             // experimental code which runs python code that adds 3 to c# integer, then displays this number in graph
             int integer = 21;
             object output = RunPython(
-@"integer=integer+3;
+@"import tensorflow
+integer=integer+3
 result=integer
 ", integer, "integer", "result");
             WpfPlot1.Plot.Add.Text(output.ToString(), 0, 0);
-
-            //PythonEngine.RunSimpleString(@"print(""hello world from python!"")");
         }
 
         private object RunPython(string pycode, object parameter, string parameterName, string returnedVariableName)
