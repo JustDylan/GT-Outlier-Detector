@@ -50,9 +50,11 @@ namespace Outlier_Detection_UI
             return returnedVariable;
         }
 
+        // Temporary Needs to be changed later
         private void Model_Click(object sender, RoutedEventArgs e)
         {
-            // Implement Later
+            // Implement properly later
+
         }
 
         private void Train_Click(object sender, RoutedEventArgs e)
@@ -77,6 +79,8 @@ namespace Outlier_Detection_UI
             }
         }
 
+
+        // UNDER CONSTRUCTION
         private void Run_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFile = new OpenFileDialog();
@@ -87,18 +91,43 @@ namespace Outlier_Detection_UI
             if (openFile.ShowDialog() == true)
             {
                 var csv = ReadCSVFile.GetCSVData(openFile.FileName);
-                foreach(var row in csv)
-                {
-
-                    float integer = float.Parse(row, CultureInfo.InvariantCulture.NumberFormat);
-                    object output = RunPython(@"csv; result = csv", csv, "integer", "result");
-                    WpfPlot1.Plot.Add.Text(output.ToString(), 0, 0);
-                }
-                
 
                 // print csv file to DataGrid
                 CSVData.ItemsSource = csv;
             }
+
+            // Change later to have user select model or python script they want to use
+            string pyPath = System.IO.Path.GetFullPath("../../../../python_scripts/Test_For_Csharp");
+            string pyCode = System.IO.File.ReadAllText(pyPath);
+            object output;
+            try
+            {
+
+                output = RunPython(pyCode, null, "", "testInteger");
+
+                // Convert Python object to string
+                string result = output.ToString();
+
+                //
+                string[] theNumbers = result.Trim('[', ']').Split(',');
+
+                int[] intArray = theNumbers.Select(n => int.Parse(n)).ToArray();
+                int index = 1;
+                foreach (int var in intArray)
+                {
+                    WpfPlot1.Plot.Add.Scatter(index, var);
+                    index++;
+                }
+
+                WpfPlot1.Refresh();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: RunPython failure.");
+                Console.WriteLine("Exception Message: " + ex.Message);
+            }
+
+           
         }
     }
 }
