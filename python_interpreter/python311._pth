@@ -1,5 +1,9 @@
 python311.zip
 .
 
+# using libraries from venv
+..\env\Lib
+..\env\Lib\site-packages
+
 # Uncomment to run site.main() automatically
 #import site
