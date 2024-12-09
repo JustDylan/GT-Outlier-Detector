@@ -1,7 +1,7 @@
 
-# My files to ignore
-!python_interpreter/
-!csv files/
+!python_interpreter/*
+!csv files/*
+
 !*.gitkeep
 
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudio,csharp,python

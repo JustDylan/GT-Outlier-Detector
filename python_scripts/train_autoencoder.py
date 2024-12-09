@@ -6,7 +6,7 @@ from tensorflow.keras.models import Model
 
 import csv
 
-DATA_PATH = "DataSet1_Normalized.csv"
+DATA_PATH = "resources\\DataSet1_Normalized.csv"
 
 # autoencoder model
 class AnomalyDetector(Model):
@@ -47,11 +47,13 @@ with open(DATA_PATH) as csvfile:
 autoencoder = AnomalyDetector(2, 13)
 autoencoder.compile(optimizer='adam', loss='mae')
 autoencoder.fit(data, data,
-          epochs=2000,
+          epochs=10,
           batch_size=32,
           validation_data=(data, data),
-          shuffle=True)
+          shuffle=True,
+          verbose=0)
 
 # save trained model to file
 autoencoder.export("autoencoder")
 #autoencoder.save("autoencoder.keras")
+test = "done"
