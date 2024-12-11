@@ -41,22 +41,18 @@ import tensorflow as tf
 from tensorflow.keras import layers, losses
 from tensorflow.keras.models import Model
 
-import csv
-
-DATA_PATH = ""resources\\DataSet1_Normalized.csv""
-
 # autoencoder model
 class AnomalyDetector(Model):
   def __init__(self, latent_dim, dim):
     super(AnomalyDetector, self).__init__()
     self.encoder = tf.keras.Sequential([
-      layers.Dense(7, activation=""relu""),
+      layers.Dense(10, activation=""relu""),
       #layers.Dense(4, activation=""relu""),
       layers.Dense(latent_dim, activation=""relu"")])
 
     self.decoder = tf.keras.Sequential([
       #layers.Dense(4, activation=""relu""),
-      layers.Dense(7, activation=""relu""),
+      layers.Dense(10, activation=""relu""),
       layers.Dense(dim, activation=""sigmoid"")])
 
   def call(self, x):
@@ -67,10 +63,10 @@ class AnomalyDetector(Model):
 data = np.array(input_data, dtype=""float32"")
 
 # train autoencoder
-autoencoder = AnomalyDetector(2, 13)
+autoencoder = AnomalyDetector(7, 13)
 autoencoder.compile(optimizer='adam', loss='mae')
 autoencoder.fit(data, data,
-          epochs=10,
+          epochs=160,
           batch_size=32,
           validation_data=(data, data),
           shuffle=True,
@@ -89,10 +85,6 @@ import tensorflow as tf
 
 from tensorflow.keras import layers, losses
 from tensorflow.keras.models import Model
-
-import csv
-
-DATA_PATH = ""resources\\DataSet1_Normalized.csv""
 
 print(tf.version.VERSION)
 
@@ -174,7 +166,10 @@ test = ""done""
 
         private void Train_Click(object sender, RoutedEventArgs e)
         {
-            // Implement Later
+            var csv = getCurrentCSV();
+
+            if(csv != null)
+                RunPython("input_data = " + getCSVString(csv) + "\n" + trainCode, "test");
         }
 
         // Method to open csv file and process to data grid
