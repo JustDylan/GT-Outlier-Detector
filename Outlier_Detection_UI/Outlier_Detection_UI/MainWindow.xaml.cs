@@ -19,6 +19,7 @@ using Microsoft.VisualBasic.ApplicationServices;
 using System.Diagnostics;
 using System.Windows.Controls.Primitives;
 using System.Globalization;
+using System.Data;
 
 namespace Outlier_Detection_UI
 {
@@ -136,7 +137,7 @@ decoded_data = autoencoder.serve(data)
 decoded_error = [vDiff(decoded_data[i], data[i]) for i in range(0, len(decoded_data))]
 result = []
 for i in decoded_error:
-	result.append(float(i)*10000.0)
+	result.append(float(i))
 
 test = ""done""
 ";
@@ -214,6 +215,11 @@ test = ""done""
             }
         }
 
+        // returns the csv in the window's datagrid
+        private DataView getCurrentCSV()
+        {
+            return (System.Data.DataView)CSVData.ItemsSource;
+        }
 
         // UNDER CONSTRUCTION
         private void Run_Click(object sender, RoutedEventArgs e)
@@ -229,6 +235,7 @@ test = ""done""
 
                 // print csv file to DataGrid
                 CSVData.ItemsSource = csv;
+                
             }
 
             // Change later to have user select model or python script they want to use
@@ -237,6 +244,13 @@ test = ""done""
             object output;
             //try
             {
+                DataView csv = getCurrentCSV();
+
+                // exit if csv is not set
+                if (csv == null)
+                {
+                    return;
+                }
 
                 output = RunPython(testCode, "result");
 
@@ -247,13 +261,18 @@ test = ""done""
                 string[] theNumbers = result.Trim('[', ']').Split(',');
 
                 double[] arr = theNumbers.Select(n => double.Parse(n)).ToArray();
-                int index = 1;
-                foreach (int var in arr)
+
+                // get idx column
+                List<int> idxColumn = new List<int>();
+                for (int i = 0; i < arr.Length; ++i)
                 {
-                    WpfPlot1.Plot.Add.Scatter(index, var);
-                    index++;
+                    idxColumn.Add(int.Parse(csv[i][0].ToString()));
                 }
 
+                ScottPlot.Plottables.Scatter plot = WpfPlot1.Plot.Add.Scatter(idxColumn.ToArray(), arr);
+                plot.LineStyle.IsVisible = false;
+
+                WpfPlot1.Plot.Axes.AutoScale();
                 WpfPlot1.Refresh();
             }
             /*catch (Exception ex)
