@@ -150,7 +150,7 @@ test = ""done""
             Environment.SetEnvironmentVariable("PYTHONNET_PYDLL", pythonDll);
             Runtime.PythonDLL = pythonDll;
 
-            RunPython(trainCode, "test");
+            //RunPython(trainCode, "test");
         }
 
         /*
