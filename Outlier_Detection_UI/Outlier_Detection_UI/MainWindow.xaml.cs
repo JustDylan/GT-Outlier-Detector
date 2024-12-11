@@ -20,6 +20,8 @@ using System.Diagnostics;
 using System.Windows.Controls.Primitives;
 using System.Globalization;
 using System.Data;
+using ScottPlot.Plottables;
+using System.Data.Common;
 
 namespace Outlier_Detection_UI
 {
@@ -28,6 +30,7 @@ namespace Outlier_Detection_UI
     /// </summary>
     public partial class MainWindow : Window
     {
+        // python string that takes input_data
         string trainCode = @"
 #import os
 #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
@@ -61,21 +64,7 @@ class AnomalyDetector(Model):
     decoded = self.decoder(encoded)
     return decoded
 
-# read data from csv only including columns X1 through X13
-data = {}
-with open(DATA_PATH) as csvfile:
-	csvreader = csv.reader(csvfile, delimiter="","")
-	raw_data = list(csvreader)
-	
-	# remove header row
-	raw_data = raw_data[1:]
-	
-	# remove first 2 columns and parse floats
-	for i in range(0, len(raw_data)):
-		raw_data[i] = raw_data[i][2:]
-		raw_data[i] = [float(elem) for elem in raw_data[i]]
-		
-	data = np.array(raw_data, dtype=""float32"")
+data = np.array(input_data, dtype=""float32"")
 
 # train autoencoder
 autoencoder = AnomalyDetector(2, 13)
@@ -93,6 +82,7 @@ autoencoder.export(""autoencoder"")
 test = ""done""
 ";
 
+        // python string that takes input_data and returns it as result
         string testCode = @"
 import numpy as np
 import tensorflow as tf
@@ -110,23 +100,8 @@ print(tf.version.VERSION)
 def vDiff(arr1, arr2):
 	length = min(len(arr1), len(arr2))
 	return sum([((arr1[i] - arr2[i])**2)/length for i in range(0, length)], 0)
-
-
-# read data from csv only including columns X1 through X13
-data = {}
-with open(DATA_PATH) as csvfile:
-	csvreader = csv.reader(csvfile, delimiter="","")
-	raw_data = list(csvreader)
-	
-	# remove header row
-	raw_data = raw_data[1:]
-	
-	# remove first 2 columns and parse floats
-	for i in range(0, len(raw_data)):
-		raw_data[i] = raw_data[i][2:]
-		raw_data[i] = [float(elem) for elem in raw_data[i]]
 		
-	data = np.array(raw_data, dtype=""float32"")
+data = np.array(input_data, dtype=""float32"")
 
 # load autoencoder from model trained by train_autoencoder
 autoencoder = tf.saved_model.load(""autoencoder"")
@@ -142,6 +117,8 @@ for i in decoded_error:
 test = ""done""
 ";
 
+        Scatter dataPlot;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -151,7 +128,9 @@ test = ""done""
             Environment.SetEnvironmentVariable("PYTHONNET_PYDLL", pythonDll);
             Runtime.PythonDLL = pythonDll;
 
-            //RunPython(trainCode, "test");
+            // add empty plot for data
+            dataPlot = WpfPlot1.Plot.Add.Scatter(new int[] { }, new float[] { });
+            dataPlot.LineStyle.IsVisible = false;
         }
 
         /*
@@ -221,6 +200,29 @@ test = ""done""
             return (System.Data.DataView)CSVData.ItemsSource;
         }
 
+        private string getCSVString(DataView csv)
+        {
+            string csvString = "[";
+            // convert csv to python variable
+            // exclude first row and first two columns
+            for (int r = 1; r < csv.Count; ++r)
+            {
+                object[] row = csv[r].Row.ItemArray;
+
+                // add row to string
+                csvString += "[";
+                for (int c = 2; c < row.Length; ++c)
+                {
+                    csvString += c + 1 < row.Length ? row[c].ToString() + "," : row[c].ToString();
+                }
+                csvString += r + 1 < csv.Count ? "]," : "]";
+            }
+
+            csvString += "]";
+
+            return csvString;
+        }
+
         // UNDER CONSTRUCTION
         private void Run_Click(object sender, RoutedEventArgs e)
         {
@@ -238,7 +240,8 @@ test = ""done""
                     return;
                 }
 
-                output = RunPython(testCode, "result");
+                // run python with csv file added
+                output = RunPython("input_data = " + getCSVString(csv) + "\n" + testCode, "result");
 
                 // Convert Python object to string
                 string result = output.ToString();
@@ -246,7 +249,7 @@ test = ""done""
                 //
                 string[] theNumbers = result.Trim('[', ']').Split(',');
 
-                double[] arr = theNumbers.Select(n => double.Parse(n)).ToArray();
+                float[] arr = theNumbers.Select(n => float.Parse(n)).ToArray();
 
                 // get idx column
                 List<int> idxColumn = new List<int>();
@@ -255,8 +258,9 @@ test = ""done""
                     idxColumn.Add(int.Parse(csv[i][0].ToString()));
                 }
 
-                ScottPlot.Plottables.Scatter plot = WpfPlot1.Plot.Add.Scatter(idxColumn.ToArray(), arr);
-                plot.LineStyle.IsVisible = false;
+                WpfPlot1.Plot.Remove(dataPlot);
+                dataPlot = WpfPlot1.Plot.Add.Scatter(idxColumn.ToArray(), arr);
+                dataPlot.LineStyle.IsVisible = false;
 
                 WpfPlot1.Plot.Axes.AutoScale();
                 WpfPlot1.Refresh();
