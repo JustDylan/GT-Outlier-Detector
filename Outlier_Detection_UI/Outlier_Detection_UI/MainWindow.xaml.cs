@@ -224,20 +224,6 @@ test = ""done""
         // UNDER CONSTRUCTION
         private void Run_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFile = new OpenFileDialog();
-
-            // Change to open in specific folder later *****
-            openFile.Filter = "Csv Files| *.csv";
-
-            if (openFile.ShowDialog() == true)
-            {
-                var csv = ReadCSVFile.GetCSVData(openFile.FileName);
-
-                // print csv file to DataGrid
-                CSVData.ItemsSource = csv;
-                
-            }
-
             // Change later to have user select model or python script they want to use
             //string pyPath = System.IO.Path.GetFullPath("../../../../python_scripts/Test_For_Csharp");
             //string pyCode = System.IO.File.ReadAllText(pyPath);
